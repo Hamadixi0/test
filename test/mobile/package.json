@@ -1,0 +1,7 @@
+{
+  "name": "mobile",
+  "version": "1.0.0",
+  "description": "Minimal package for CI cache compatibility",
+  "main": "index.js",
+  "license": "MIT"
+}
