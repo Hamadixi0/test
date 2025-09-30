@@ -15,7 +15,7 @@ export class SocketService {
     this.io.on('connection', this.handleConnection.bind(this));
   }
 
-  private async authMiddleware(socket: Socket, next: Function) {
+  private async authMiddleware(socket: Socket, next: (err?: Error) => void) {
     try {
       const token = socket.handshake.auth.token;
       if (!token) {
