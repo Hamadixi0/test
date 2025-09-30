@@ -126,9 +126,7 @@ export const startGeneration = createAsyncThunk(
       };
       
       // Simulate async generation
-      setTimeout(() => {
-        // This would normally be handled by websocket updates
-      }, 2000);
+      // This would normally be handled by websocket updates
       
       return generation;
     } catch (error: any) {

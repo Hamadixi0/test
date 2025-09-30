@@ -42,7 +42,7 @@ const initialState: ProjectState = {
 // Async thunks
 export const fetchProjects = createAsyncThunk(
   'projects/fetchProjects',
-  async (params: { page?: number; limit?: number; status?: string } = {}, { rejectWithValue }) => {
+  async (_params: { page?: number; limit?: number; status?: string } = {}, { rejectWithValue }) => {
     try {
       // TODO: Implement actual API call
       const mockProjects: Project[] = [
