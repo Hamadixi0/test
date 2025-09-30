@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String   @unique
+  firstName   String?
+  lastName    String?
+  avatar      String?
+  bio         String?
+  githubId    String?  @unique
+  
+  // AI API Keys (encrypted)
+  openaiApiKey      String?
+  openrouterApiKey  String?
+  anthropicApiKey   String?
+  
+  // Subscription
+  subscriptionTier  String   @default("free") // free, premium
+  subscriptionEnd   DateTime?
+  
+  // Preferences
+  preferences       Json     @default("{}")
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastLoginAt DateTime?
+  
+  // Relations
+  projects    Project[]
+  sessions    Session[]
+  
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        String   // "2D", "2.5D", "3D"
+  engine      String   // "unity", "godot"
+  
+  // GitHub Integration
+  githubRepoUrl   String?
+  githubBranch    String   @default("main")
+  
+  // Project Configuration
+  config          Json     @default("{}")
+  
+  // AI Generation Settings
+  aiPrompt        String?
+  aiConfig        Json     @default("{}")
+  
+  // Build Status
+  status          String   @default("draft") // draft, generating, ready, building, published, error
+  buildVersion    Int      @default(1)
+  
+  // File Storage
+  assetsUrl       String?
+  previewUrl      String?
+  
+  // Privacy
+  isPublic        Boolean  @default(false)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  
+  // Relations
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generations Generation[]
+  builds      Build[]
+  
+  @@map("projects")
+}
+
+model Generation {
+  id          String   @id @default(cuid())
+  projectId   String
+  type        String   // "code", "2d_art", "3d_model", "audio", "level", "ui", "shader", "physics"
+  prompt      String
+  status      String   @default("pending") // pending, generating, completed, failed
+  
+  // AI Agent Configuration
+  agent       String   // which AI agent handled this
+  aiModel     String?  // which AI model was used
+  
+  // Results
+  resultData  Json?    // generated content metadata
+  resultUrls  String[] // URLs to generated files
+  
+  // Generation Settings
+  config      Json     @default("{}")
+  
+  // Quality Control
+  approved    Boolean? // user approval status
+  quality     Float?   // 0-1 quality score
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+  
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@map("generations")
+}
+
+model Build {
+  id          String   @id @default(cuid())
+  projectId   String
+  version     Int
+  type        String   // "preview", "webgl", "android", "ios", "windows", "mac", "linux"
+  status      String   @default("pending") // pending, building, completed, failed, deployed
+  
+  // Build Configuration
+  config      Json     @default("{}")
+  
+  // Build Results
+  buildUrl    String?  // URL to built game
+  downloadUrl String?  // URL to download build
+  size        BigInt?  // Build size in bytes
+  
+  // Build Logs
+  logs        String?
+  error       String?
+  
+  // Performance Metrics
+  buildTime   Int?     // Build time in seconds
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+  
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@map("builds")
+}
+
+model ApiUsage {
+  id          String   @id @default(cuid())
+  userId      String
+  service     String   // "openai", "openrouter", "anthropic"
+  model       String   // specific model used
+  tokens      Int      // tokens consumed
+  cost        Float?   // cost in USD
+  
+  // Request Details
+  requestType String   // "generation", "chat", "embedding"
+  projectId   String?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  
+  @@map("api_usage")
+}
+
+model SystemStats {
+  id              String   @id @default(cuid())
+  totalUsers      Int      @default(0)
+  totalProjects   Int      @default(0)
+  totalBuilds     Int      @default(0)
+  activeUsers24h  Int      @default(0)
+  
+  // Performance Metrics
+  avgBuildTime    Float?
+  successRate     Float?
+  
+  // Resource Usage
+  storageUsed     BigInt   @default(0) // bytes
+  bandwidthUsed   BigInt   @default(0) // bytes
+  
+  // Timestamps
+  date        DateTime @unique @default(now())
+  createdAt   DateTime @default(now())
+  
+  @@map("system_stats")
+}
