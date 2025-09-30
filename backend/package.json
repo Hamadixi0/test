@@ -1,0 +1,51 @@
+{
+  "name": "ai-game-builder-backend",
+  "version": "1.0.0",
+  "description": "Backend API and AI orchestration for AI Game Builder Platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "dotenv": "^16.3.1",
+    "socket.io": "^4.7.2",
+    "pg": "^8.11.3",
+    "redis": "^4.6.8",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "axios": "^1.5.0",
+    "multer": "^1.4.5-lts.1",
+    "aws-sdk": "^2.1447.0",
+    "simple-git": "^3.19.0",
+    "uuid": "^9.0.0",
+    "joi": "^17.9.2",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.6.4",
+    "supertest": "^6.3.3",
+    "eslint": "^8.47.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-n": "^16.0.2",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "keywords": [
+    "api",
+    "ai",
+    "game-builder",
+    "backend",
+    "express"
+  ],
+  "author": "AI Game Builder Platform Team",
+  "license": "MIT"
+}
