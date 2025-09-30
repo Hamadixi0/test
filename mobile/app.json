@@ -30,9 +30,6 @@
       "name": "AI Game Builder",
       "shortName": "GameBuilder"
     },
-    "plugins": [
-      "expo-auth-session"
-    ],
     "scheme": "aigamebuilder"
   }
 }
