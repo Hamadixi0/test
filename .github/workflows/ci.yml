@@ -9,7 +9,6 @@ on:
 jobs:
   backend-test:
     runs-on: ubuntu-latest
-    
     services:
       postgres:
         image: postgres:14
@@ -23,7 +22,6 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-      
       redis:
         image: redis:7
         options: >-
@@ -33,116 +31,90 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
-
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: backend/package-lock.json
-    
-    - name: Install backend dependencies
-      working-directory: backend
-      run: npm ci
-    
-    - name: Generate Prisma client
-      working-directory: backend
-      run: npx prisma generate
-      env:
-        DATABASE_URL: postgresql://postgres:test@localhost:5432/ai_game_builder_test
-    
-    - name: Run backend tests
-      working-directory: backend
-      run: npm test
-      env:
-        NODE_ENV: test
-        DATABASE_URL: postgresql://postgres:test@localhost:5432/ai_game_builder_test
-        REDIS_URL: redis://localhost:6379
-        JWT_SECRET: test-secret
-    
-    - name: Build backend
-      working-directory: backend
-      run: npm run build
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      # Using npm install instead of npm ci because lock files are not yet committed.
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+      - name: Generate Prisma client
+        working-directory: backend
+        run: npx prisma generate
+        env:
+            DATABASE_URL: postgresql://postgres:test@localhost:5432/ai_game_builder_test
+      - name: Run backend tests
+        working-directory: backend
+        run: npm test
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:test@localhost:5432/ai_game_builder_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-secret
+      - name: Build backend
+        working-directory: backend
+        run: npm run build
 
   mobile-test:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: mobile/package-lock.json
-    
-    - name: Install mobile dependencies
-      working-directory: mobile
-      run: npm ci
-    
-    - name: Run mobile tests
-      working-directory: mobile
-      run: npm test -- --watchAll=false
-    
-    - name: Build mobile web
-      working-directory: mobile
-      run: npx expo export:web
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      # Using npm install instead of npm ci because lock files are not yet committed.
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+      - name: Run mobile tests
+        working-directory: mobile
+        run: npm test -- --watchAll=false
+      - name: Build mobile web
+        working-directory: mobile
+        run: npx expo export:web
 
   lint:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install root dependencies
-      run: npm ci
-    
-    - name: Install backend dependencies
-      working-directory: backend
-      run: npm ci
-    
-    - name: Install mobile dependencies
-      working-directory: mobile
-      run: npm ci
-    
-    - name: Lint backend
-      working-directory: backend
-      run: npm run lint
-    
-    - name: Lint mobile
-      working-directory: mobile
-      run: npm run lint
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install root dependencies (if root package.json present)
+        if: hashFiles('package.json') != ''
+        run: npm install
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+      - name: Lint backend
+        working-directory: backend
+        run: npm run lint
+      - name: Lint mobile
+        working-directory: mobile
+        run: npm run lint
 
   deploy-staging:
     if: github.ref == 'refs/heads/develop'
     needs: [backend-test, mobile-test, lint]
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Deploy to staging
-      run: echo "Deploy to staging environment"
-      # Add actual deployment steps here
+      - uses: actions/checkout@v3
+      - name: Deploy to staging
+        run: echo "Deploy to staging environment"
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
     needs: [backend-test, mobile-test, lint]
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Deploy to production
-      run: echo "Deploy to production environment"
-      # Add actual deployment steps here
+      - uses: actions/checkout@v3
+      - name: Deploy to production
+        run: echo "Deploy to production environment".
