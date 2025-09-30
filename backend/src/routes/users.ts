@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { db } from '../services/database';
 import { AuthenticatedRequest } from '../middleware/auth';
@@ -6,7 +6,7 @@ import { AuthenticatedRequest } from '../middleware/auth';
 const router = Router();
 
 // Get current user profile
-router.get('/me', async (req: AuthenticatedRequest, res: Response, next) => {
+router.get('/me', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const user = await db.user.findUnique({
       where: { id: req.user!.id },
@@ -45,7 +45,7 @@ router.put('/me', [
   body('lastName').optional().trim().isLength({ max: 50 }),
   body('bio').optional().trim().isLength({ max: 500 }),
   body('preferences').optional().isObject(),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -93,7 +93,7 @@ router.put('/api-keys', [
   body('openaiApiKey').optional().isString(),
   body('openrouterApiKey').optional().isString(),
   body('anthropicApiKey').optional().isString(),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -128,7 +128,7 @@ router.put('/api-keys', [
 });
 
 // Get user's API usage stats
-router.get('/usage', async (req: AuthenticatedRequest, res: Response, next) => {
+router.get('/usage', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const usage = await db.apiUsage.groupBy({
       by: ['service', 'model'],

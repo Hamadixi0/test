@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -14,7 +14,7 @@ router.post('/register', [
   body('password').isLength({ min: 6 }),
   body('firstName').optional().trim(),
   body('lastName').optional().trim(),
-], async (req: Request, res: Response, next) => {
+], async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -87,7 +87,7 @@ router.post('/register', [
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').notEmpty(),
-], async (req: Request, res: Response, next) => {
+], async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -148,7 +148,7 @@ router.post('/login', [
 });
 
 // GitHub OAuth callback (placeholder)
-router.post('/github', async (req: Request, res: Response, next) => {
+router.post('/github', async (req: Request, res: Response, next: NextFunction) => {
   try {
     // TODO: Implement GitHub OAuth flow
     res.status(501).json({
