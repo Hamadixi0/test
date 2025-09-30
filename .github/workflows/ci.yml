@@ -33,6 +33,21 @@ jobs:
           - 6379:6379
     steps:
       - uses: actions/checkout@v3
+      - name: Verify lock files
+        run: |
+          if [ ! -f "package-lock.json" ]; then
+            echo "Error: package-lock.json is missing"
+            exit 1
+          fi
+          if [ ! -f "backend/package-lock.json" ]; then
+            echo "Error: backend/package-lock.json is missing"
+            exit 1
+          fi
+          if [ ! -f "mobile/package-lock.json" ]; then
+            echo "Error: mobile/package-lock.json is missing"
+            exit 1
+          fi
+          echo "All lock files are present"
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -62,6 +77,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Verify lock files
+        run: |
+          if [ ! -f "package-lock.json" ]; then
+            echo "Error: package-lock.json is missing"
+            exit 1
+          fi
+          if [ ! -f "backend/package-lock.json" ]; then
+            echo "Error: backend/package-lock.json is missing"
+            exit 1
+          fi
+          if [ ! -f "mobile/package-lock.json" ]; then
+            echo "Error: mobile/package-lock.json is missing"
+            exit 1
+          fi
+          echo "All lock files are present"
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -81,6 +111,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Verify lock files
+        run: |
+          if [ ! -f "package-lock.json" ]; then
+            echo "Error: package-lock.json is missing"
+            exit 1
+          fi
+          if [ ! -f "backend/package-lock.json" ]; then
+            echo "Error: backend/package-lock.json is missing"
+            exit 1
+          fi
+          if [ ! -f "mobile/package-lock.json" ]; then
+            echo "Error: mobile/package-lock.json is missing"
+            exit 1
+          fi
+          echo "All lock files are present"
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
