@@ -1,11 +1,11 @@
-import { Router, Response } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 
 // Get available AI models and agents
-router.get('/models', async (req: AuthenticatedRequest, res: Response, next) => {
+router.get('/models', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const models = {
       code: [
@@ -38,7 +38,7 @@ router.get('/models', async (req: AuthenticatedRequest, res: Response, next) => 
 router.post('/test', [
   body('service').isIn(['openai', 'anthropic', 'openrouter']),
   body('apiKey').isString().notEmpty(),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -72,7 +72,7 @@ router.post('/test', [
 });
 
 // Get AI generation templates
-router.get('/templates', async (req: AuthenticatedRequest, res: Response, next) => {
+router.get('/templates', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const templates = {
       gameTypes: [

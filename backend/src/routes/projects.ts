@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
 import { db } from '../services/database';
 import { AuthenticatedRequest } from '../middleware/auth';
@@ -11,7 +11,7 @@ router.get('/', [
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
   query('status').optional().isIn(['draft', 'generating', 'ready', 'building', 'published', 'error']),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -80,7 +80,7 @@ router.post('/', [
   body('type').isIn(['2D', '2.5D', '3D']),
   body('engine').isIn(['unity', 'godot']),
   body('aiPrompt').optional().isLength({ max: 2000 }).trim(),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -127,7 +127,7 @@ router.post('/', [
 // Get project by ID
 router.get('/:id', [
   param('id').isString().notEmpty(),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -199,7 +199,7 @@ router.post('/:id/generate', [
   param('id').isString().notEmpty(),
   body('type').isIn(['code', '2d_art', '3d_model', 'audio', 'level', 'ui', 'shader', 'physics']),
   body('prompt').isLength({ min: 1, max: 2000 }).trim(),
-], async (req: AuthenticatedRequest, res: Response, next) => {
+], async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
